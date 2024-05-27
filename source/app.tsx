@@ -1,37 +1,40 @@
-import React, {useReducer} from 'react';
-import {Box, Text, useInput} from 'ink';
+import React from 'react';
+import {Box, Text} from 'ink';
+import {AppProvider, useApp} from './providers/AppProvider.js';
+import {AccountSelector} from './views/AccountSelector.js';
+import {AccountController} from './views/AccountController.js';
+import {ExitDialog} from './views/ExitDialog.js';
+import {isValidConfig} from './config.js';
 
 // type Props = {
 // 	name: string | undefined;
 // };
-type AppState = {
-	logged: boolean;
+
+const View: React.FC = () => {
+	const [{view}] = useApp();
+
+	if (view === 'exitDialog') return <ExitDialog />;
+	if (view === 'accountController') return <AccountController />;
+	return <AccountSelector />;
 };
 
-type AppAction = {
-	type: 'logIn' | 'logOut';
-};
-
-const appReducer = (state: AppState, action: AppAction): AppState => {
-	action;
-	return state;
-};
-export default function App() {
-	const [state] = useReducer(appReducer, {logged: false});
-	useInput((input, key) => {
-		console.log(input, key);
-	});
-	return (
-		<Box borderStyle={'single'} flexDirection="column" gap={1} padding={1}>
-			<Box>
-				<Text backgroundColor="#00B1EA">
-					{' '}
-					Mercado Pago Scrapper{state.logged}
-				</Text>
+const App = () =>
+	isValidConfig() ? (
+		<AppProvider>
+			<Box flexDirection="column" gap={1} padding={1}>
+				<Text backgroundColor={'blue'}> Check Sync Client </Text>
+				<View />
 			</Box>
-			<Box>
-				<Text>Estado:</Text>
-			</Box>
+		</AppProvider>
+	) : (
+		<Box flexDirection="column" gap={1} padding={1}>
+			<Text backgroundColor={'blue'}> Check Sync Client </Text>
+			<Text>
+				<Text backgroundColor={'red'}> ! </Text> Tu configuracion no es
+				correcta. Modifica <Text bold>config.json</Text>{' '}
+				{'(instrucciones en readme)'}
+			</Text>
 		</Box>
 	);
-}
+
+export default App;
