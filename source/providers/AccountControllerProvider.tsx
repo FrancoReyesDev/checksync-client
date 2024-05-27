@@ -240,7 +240,6 @@ const reducer = (
 		scrap: {},
 	};
 
-	console.log({state, action});
 	return stateMachine[state.state]?.[action.type]?.(state, action) ?? state;
 };
 
@@ -252,7 +251,6 @@ export const AccountControllerProvider: React.FC<{
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	useEffect(() => {
-		console.log('soy un efecto');
 		const effectsMachine: EffectsMachine = {
 			initial: () =>
 				dispatch({

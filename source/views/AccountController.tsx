@@ -10,9 +10,7 @@ import {
 const AccountControllerView: React.FC = () => {
 	const [appState] = useApp();
 	const [state] = useAccountController();
-
 	console.log(state);
-
 	return (
 		<Box flexDirection="column">
 			<Box flexDirection="column" marginBottom={1}>
@@ -29,9 +27,9 @@ const AccountControllerView: React.FC = () => {
 					Estado:{' '}
 					<Text
 						bold
-						color={'account' in state && state.account ? 'green' : 'red'}
+						color={'logged' in state && state.logged ? 'green' : 'red'}
 					>
-						{'account' in state && state.account ? 'logueado' : 'sin loguear'}
+						{'logged' in state && state.logged ? 'logueado' : 'sin loguear'}
 					</Text>
 				</Text>
 			</Box>
