@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import {Config} from '../config.js';
 import {
-	AccountSelectorState,
 	AccountControllerState as AppAccountControllerState,
 	useApp,
 } from './AppProvider.js';
@@ -24,6 +23,11 @@ type InitialState = {
 
 interface IdleState extends FetchedState {
 	state: 'idle';
+}
+
+interface Login_InitialState extends FetchedState {
+	state: 'login';
+	status: 'initial';
 }
 
 interface Login_LoadingState extends FetchedState {
@@ -43,6 +47,17 @@ interface Login_SuccessState extends FetchedState {
 	data: string;
 }
 
+type LoginState =
+	| Login_InitialState
+	| Login_ErrorState
+	| Login_LoadingState
+	| Login_SuccessState;
+
+interface Logout_InitialState extends FetchedState {
+	state: 'logout';
+	status: 'initial';
+}
+
 interface Logout_LoadingState extends FetchedState {
 	state: 'logout';
 	status: 'loading';
@@ -57,6 +72,17 @@ interface Logout_SuccessState extends FetchedState {
 	state: 'logout';
 	status: 'success';
 	data: string;
+}
+
+type LogoutState =
+	| Logout_InitialState
+	| Logout_ErrorState
+	| Logout_SuccessState
+	| Logout_LoadingState;
+
+interface Status_InitialState extends FetchedState {
+	state: 'status';
+	status: 'initial';
 }
 
 interface Status_LoadingState extends FetchedState {
@@ -76,6 +102,17 @@ interface Status_SuccessState extends FetchedState {
 	data: string;
 }
 
+type StatusState =
+	| Status_InitialState
+	| Status_LoadingState
+	| Status_ErrorState
+	| Status_SuccessState;
+
+interface Scrap_InitialState extends FetchedState {
+	state: 'scrap';
+	status: 'initial';
+}
+
 interface Scrap_LoadingState extends FetchedState {
 	state: 'scrap';
 	status: 'loading';
@@ -93,19 +130,13 @@ interface Scrap_SuccessState extends FetchedState {
 	data: string;
 }
 
-type WithStatusState =
-	| Login_LoadingState
-	| Login_ErrorState
-	| Login_SuccessState
-	| Logout_LoadingState
-	| Logout_ErrorState
-	| Logout_SuccessState
-	| Status_LoadingState
-	| Status_ErrorState
-	| Status_SuccessState
-	| Scrap_LoadingState
+type ScrapState =
 	| Scrap_ErrorState
+	| Scrap_InitialState
+	| Scrap_LoadingState
 	| Scrap_SuccessState;
+
+type WithStatusState = LoginState | LogoutState | StatusState | ScrapState;
 
 type AccountControllerState = InitialState | IdleState | WithStatusState;
 // Actions
@@ -113,13 +144,33 @@ type InitAction = {
 	type: 'init';
 	account: Config['accounts'][number];
 };
+type Fetch_InitialAction = {
+	type: 'fetch';
+};
 
-type AccountControllerAction = InitAction;
+interface Fetch_SuccessAction extends Fetch_InitialAction {
+	data: string;
+}
+
+interface Fetch_ErrorAction extends Fetch_InitialAction {
+	error: string;
+}
+
+type BackAction = {
+	type: 'back';
+};
+
+type FetchAction =
+	| Fetch_InitialAction
+	| Fetch_SuccessAction
+	| BackAction
+	| Fetch_ErrorAction;
+
+type AccountControllerAction = FetchAction | InitAction;
 
 type EffectsMachine = {
 	[state in AccountControllerState['state']]?: (
 		state: AccountControllerState,
-		action: AccountControllerAction,
 	) => void;
 };
 
@@ -141,8 +192,56 @@ const reducer = (
 	state: AccountControllerState,
 	action: AccountControllerAction,
 ): AccountControllerState => {
-	action;
-	return state;
+	const stateMachine: StateMachine = {
+		initial: {
+			init: (_, action) => ({
+				state: 'status',
+				logged: false,
+				status: 'initial',
+				account: (action as InitAction).account,
+			}),
+		},
+		idle: {},
+		login: {},
+		logout: {},
+		status: {
+			fetch: (state, action) => {
+				const {status} = state as WithStatusState;
+				if (status === 'initial')
+					return {
+						...state,
+						state: 'status',
+						status: 'loading',
+						logged: false,
+					} as WithStatusState;
+				if (status === 'loading') {
+					if ('data' in action)
+						return {
+							...state,
+							state: 'status',
+							status: 'success',
+							logged: true,
+						} as WithStatusState;
+					if ('error' in action)
+						return {
+							...state,
+							state: 'status',
+							status: 'error',
+							logged: false,
+						} as WithStatusState;
+				}
+				return state;
+			},
+			back: state => {
+				const {account, logged, status} = state as WithStatusState;
+				return status === 'loading' ? state : {state: 'idle', account, logged};
+			},
+		},
+		scrap: {},
+	};
+
+	console.log({state, action});
+	return stateMachine[state.state]?.[action.type]?.(state, action) ?? state;
 };
 
 export const AccountControllerProvider: React.FC<{
@@ -153,14 +252,28 @@ export const AccountControllerProvider: React.FC<{
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	useEffect(() => {
+		console.log('soy un efecto');
 		const effectsMachine: EffectsMachine = {
 			initial: () =>
 				dispatch({
 					type: 'init',
 					account: (appState as AppAccountControllerState).account,
 				}),
+			status: () => {
+				const {status} = state as WithStatusState;
+				if (status === 'initial') return dispatch({type: 'fetch'});
+				if (status === 'loading') {
+					// Get status
+					() => {};
+
+					return dispatch({type: 'fetch', data: 'logged'});
+				}
+			},
 		};
-	}, [appState]);
+
+		const stateEffect = effectsMachine[state.state];
+		stateEffect !== undefined && stateEffect(state);
+	}, [state]);
 
 	return (
 		<context.Provider value={accountControllerReducer}>
