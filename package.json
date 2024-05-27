@@ -10,6 +10,7 @@
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsc --watch",
+		"start": "node ./dist/cli.js",
 		"test": "prettier --check . && xo && ava",
 		"push": "git add . ; git commit -m 'fast commit' ; git push origin main"
 	},
