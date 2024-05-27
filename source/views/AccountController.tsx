@@ -27,9 +27,12 @@ const AccountControllerView: React.FC = () => {
 				</Text>
 				<Text>
 					Estado:{' '}
-					{/* <Text bold color={isLogged ? 'green' : 'red'}>
-						{isLogged ? 'logueado' : 'sin loguear'}
-					</Text> */}
+					<Text
+						bold
+						color={'account' in state && state.account ? 'green' : 'red'}
+					>
+						{'account' in state && state.account ? 'logueado' : 'sin loguear'}
+					</Text>
 				</Text>
 			</Box>
 
