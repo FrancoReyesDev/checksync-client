@@ -12,6 +12,7 @@ const configSchema = z.object({
 			color: z.string().optional(),
 			loginUrl: z.string(),
 			loggedInPathHint: z.string(),
+			loggedOrigin: z.string(),
 			scrap: z.object({
 				frequency: z.number(),
 				steps: z.any(),
@@ -21,7 +22,10 @@ const configSchema = z.object({
 });
 
 export const config = JSON.parse(
-	fs.readFileSync('./config.json', {encoding: 'utf-8', flag: 'r'}),
+	fs.readFileSync('./scraperconfig/config.json', {
+		encoding: 'utf-8',
+		flag: 'r',
+	}),
 ) as Config;
 
 export const isValidConfig = () => {
@@ -39,6 +43,7 @@ export interface Config {
 		id: string;
 		color?: string;
 		loginUrl: string;
+		loggedOrigin: string;
 		loggedInPathHint: string;
 		scrap: {
 			frequency: number;

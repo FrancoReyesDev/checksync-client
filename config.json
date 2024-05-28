@@ -5,6 +5,7 @@
 			"id": "mercado pago",
 			"color": "",
 			"loginUrl": "https://www.mercadolibre.com/jms/mla/lgz/login?platform_id=MP",
+			"loggedOrigin": "https://www.mercadopago.com.ar",
 			"loggedInPathHint": "home",
 			"scrap": {
 				"frequency": 1800000,

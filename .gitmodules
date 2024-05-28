@@ -1,0 +1,3 @@
+[submodule "scraperconfig"]
+	path = scraperconfig
+	url = https://github.com/FrancoReyesDev/checkSync-scraperConfig.git

@@ -15,6 +15,7 @@ import {
 	Login_ErrorState,
 	Scrap_ErrorState,
 	Logout_ErrorState,
+	Login_SuccessState,
 } from '../providers/AccountControllerProvider/types/index.js';
 import {config} from '../config.js';
 // import {login} from '../lib/login.js';
@@ -65,7 +66,9 @@ const AccountControllerView: React.FC = () => {
 			},
 		};
 
-		return 'status' in state
+		return 'status' in state &&
+			logMachine[state.state] !== undefined &&
+			logMachine[state.state][state.status] !== undefined
 			? {log: logMachine[state.state][state.status]}
 			: {log: logMachine[selectedAction]['default'], status: 'idle'};
 	};
@@ -73,6 +76,9 @@ const AccountControllerView: React.FC = () => {
 	const {status, log} = getActionLog();
 
 	useInput((_, key) => {
+		if (_ === 'c')
+			console.log({data: (state as Login_SuccessState).sessionCookies});
+
 		if ((key.leftArrow || key.rightArrow) && state.state !== 'idle')
 			dispatch({type: 'back'});
 

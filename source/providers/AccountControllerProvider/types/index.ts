@@ -1,13 +1,15 @@
 import puppeteer from 'puppeteer';
 
 import {Config} from '../../../config.js';
+import {LoginHandler} from '../../../lib/login.js';
 
 export type Actions = 'login' | 'logout' | 'status' | 'scrap';
 
 // States
 export interface FetchedState {
-	logged: boolean;
 	account: Config['accounts'][number];
+	statusData?: string;
+	sessionCookies?: puppeteer.Cookie[];
 }
 
 export type InitialState = {
@@ -26,6 +28,7 @@ export interface Login_InitialState extends FetchedState {
 export interface Login_LoadingState extends FetchedState {
 	state: 'login';
 	status: 'loading';
+	loginHandler: LoginHandler;
 }
 
 export interface Login_ErrorState extends FetchedState {
@@ -37,7 +40,7 @@ export interface Login_ErrorState extends FetchedState {
 export interface Login_SuccessState extends FetchedState {
 	state: 'login';
 	status: 'success';
-	data: puppeteer.Cookie[];
+	sessionCookies: puppeteer.Cookie[];
 }
 
 export type LoginState =
@@ -64,7 +67,6 @@ export interface Logout_ErrorState extends FetchedState {
 export interface Logout_SuccessState extends FetchedState {
 	state: 'logout';
 	status: 'success';
-	data: string;
 }
 
 export type LogoutState =
@@ -92,7 +94,7 @@ export interface Status_ErrorState extends FetchedState {
 export interface Status_SuccessState extends FetchedState {
 	state: 'status';
 	status: 'success';
-	data: string;
+	statusData: string;
 }
 
 export type StatusState =
@@ -146,7 +148,7 @@ export type Fetch_InitialAction = {
 };
 
 export interface Fetch_SuccessAction extends Fetch_InitialAction {
-	data: string;
+	statusData: string;
 }
 
 export interface Fetch_ErrorAction extends Fetch_InitialAction {
@@ -165,10 +167,32 @@ export type ExecAction = {
 export type FetchAction =
 	| Fetch_InitialAction
 	| Fetch_SuccessAction
-	| BackAction
 	| Fetch_ErrorAction;
 
-export type AccountControllerAction = FetchAction | InitAction | ExecAction;
+export type Login_InitialAction = {
+	type: 'login';
+	loginHandler: LoginHandler;
+};
+
+export interface Login_ErrorAction extends Login_InitialAction {
+	error: string;
+}
+
+export interface Login_SuccessAction extends Login_InitialAction {
+	sessionCookies: puppeteer.Cookie[];
+}
+
+export type LoginAction =
+	| Login_InitialAction
+	| Login_ErrorAction
+	| Login_SuccessAction;
+
+export type AccountControllerAction =
+	| BackAction
+	| FetchAction
+	| InitAction
+	| ExecAction
+	| LoginAction;
 
 export type EffectsMachine = {
 	[state in AccountControllerState['state']]?: (
