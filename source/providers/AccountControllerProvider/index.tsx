@@ -27,7 +27,7 @@ import {
 	Login_LoadingState,
 	Login_SuccessAction,
 	Login_SuccessState,
-	Logout_InitialState,
+	// Logout_InitialState,
 	ScrapState,
 	Scrap_ErrorAction,
 	Scrap_ErrorState,
@@ -68,6 +68,7 @@ const execHandler = (
 			account,
 		} satisfies Login_InitialState,
 		logout: {
+			// solo quitamos las cookies de sesion
 			...state,
 			state: 'idle',
 			sessionCookies: undefined,
