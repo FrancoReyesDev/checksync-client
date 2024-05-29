@@ -15,7 +15,7 @@ const configSchema = z.object({
 			loggedOrigin: z.string(),
 			scrap: z.object({
 				frequency: z.number(),
-				steps: z.any(),
+				steps: z.string(),
 			}),
 		}),
 	),
@@ -47,7 +47,7 @@ export interface Config {
 		loggedInPathHint: string;
 		scrap: {
 			frequency: number;
-			steps: any;
+			steps: string;
 		};
 	}[];
 }

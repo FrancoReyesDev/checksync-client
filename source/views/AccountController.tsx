@@ -15,10 +15,8 @@ import {
 	Login_ErrorState,
 	Scrap_ErrorState,
 	Logout_ErrorState,
-	Login_SuccessState,
 } from '../providers/AccountControllerProvider/types/index.js';
 import {config} from '../config.js';
-// import {login} from '../lib/login.js';
 
 type LogMachine = {
 	[state in Exclude<AccountControllerState['state'], 'idle' | 'initial'>]: {
@@ -76,8 +74,7 @@ const AccountControllerView: React.FC = () => {
 	const {status, log} = getActionLog();
 
 	useInput((_, key) => {
-		if (_ === 'c')
-			console.log({data: (state as Login_SuccessState).sessionCookies});
+		if (_ === 'c') console.log(state);
 
 		if ((key.leftArrow || key.rightArrow) && state.state !== 'idle')
 			dispatch({type: 'back'});
@@ -120,11 +117,8 @@ const AccountControllerView: React.FC = () => {
 				</Text>
 				<Text>
 					Estado:{' '}
-					<Text
-						bold
-						color={'logged' in state && state.logged ? 'green' : 'red'}
-					>
-						{'logged' in state && state.logged ? 'logueado' : 'sin loguear'}
+					<Text bold color={'sessionCookies' in state ? 'green' : 'red'}>
+						{'sessionCookies' in state ? 'logueado' : 'sin loguear'}
 					</Text>
 				</Text>
 			</Box>

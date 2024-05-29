@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import {Cookie} from 'puppeteer';
 
 import {Config} from '../../../config.js';
 import {LoginHandler} from '../../../lib/login.js';
@@ -9,7 +9,7 @@ export type Actions = 'login' | 'logout' | 'status' | 'scrap';
 export interface FetchedState {
 	account: Config['accounts'][number];
 	statusData?: string;
-	sessionCookies?: puppeteer.Cookie[];
+	sessionCookies?: Cookie[];
 }
 
 export type InitialState = {
@@ -40,7 +40,7 @@ export interface Login_ErrorState extends FetchedState {
 export interface Login_SuccessState extends FetchedState {
 	state: 'login';
 	status: 'success';
-	sessionCookies: puppeteer.Cookie[];
+	sessionCookies: Cookie[];
 }
 
 export type LoginState =
@@ -121,8 +121,8 @@ export interface Scrap_ErrorState extends FetchedState {
 
 export interface Scrap_SuccessState extends FetchedState {
 	state: 'scrap';
-	status: 'loading';
-	data: string;
+	status: 'success';
+	scrapData: string;
 }
 
 export type ScrapState =
@@ -155,6 +155,29 @@ export interface Fetch_ErrorAction extends Fetch_InitialAction {
 	error: string;
 }
 
+export type Scrap_InitialAction = {
+	type: 'scrap';
+};
+
+export interface Scrap_LoadingAction extends Scrap_InitialAction {
+	account: Config['accounts'][number];
+	sessionCookies: Cookie[];
+}
+
+export interface Scrap_ErrorAction extends Scrap_InitialAction {
+	error: string;
+}
+
+export interface Scrap_SuccessAction extends Scrap_InitialAction {
+	scrapData: string;
+}
+
+export type ScrapAction =
+	| Scrap_InitialAction
+	| Scrap_LoadingAction
+	| Scrap_ErrorAction
+	| Scrap_SuccessAction;
+
 export type BackAction = {
 	type: 'back';
 };
@@ -179,7 +202,7 @@ export interface Login_ErrorAction extends Login_InitialAction {
 }
 
 export interface Login_SuccessAction extends Login_InitialAction {
-	sessionCookies: puppeteer.Cookie[];
+	sessionCookies: Cookie[];
 }
 
 export type LoginAction =
@@ -188,6 +211,7 @@ export type LoginAction =
 	| Login_SuccessAction;
 
 export type AccountControllerAction =
+	| ScrapAction
 	| BackAction
 	| FetchAction
 	| InitAction

@@ -1,7 +1,7 @@
-import puppeteer from 'puppeteer';
+import puppeteer, {Browser, Cookie} from 'puppeteer';
 
 export type LoginHandler = {
-	login: () => Promise<{cookies: puppeteer.Cookie[]} | {error: string}>;
+	login: () => Promise<{cookies: Cookie[]} | {error: string}>;
 	close: () => undefined | Promise<void>;
 };
 
@@ -9,7 +9,7 @@ export const prepareLoginHandler = async (
 	loginUrl: string,
 	loggedPathHint: string,
 ): Promise<LoginHandler> => {
-	let browser: null | puppeteer.Browser = null;
+	let browser: null | Browser = null;
 
 	const login = async () => {
 		try {

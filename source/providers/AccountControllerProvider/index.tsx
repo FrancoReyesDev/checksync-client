@@ -15,6 +15,7 @@ import {
 	Actions,
 	EffectsMachine,
 	ExecAction,
+	Fetch_SuccessAction,
 	IdleState,
 	InitAction,
 	InitialState,
@@ -27,7 +28,14 @@ import {
 	Login_SuccessAction,
 	Login_SuccessState,
 	Logout_InitialState,
+	ScrapState,
+	Scrap_ErrorAction,
+	Scrap_ErrorState,
+	Scrap_InitialAction,
 	Scrap_InitialState,
+	Scrap_LoadingState,
+	Scrap_SuccessAction,
+	Scrap_SuccessState,
 	StateMachine,
 	StatusState,
 	Status_ErrorState,
@@ -37,6 +45,7 @@ import {
 	WithStatusState,
 } from './types/index.js';
 import {prepareLoginHandler} from '../../lib/login.js';
+import {scrap} from '../../lib/scrap.js';
 
 const initialState: InitialState = {state: 'initial'};
 const context = createContext<
@@ -95,6 +104,7 @@ const reducer = (
 				state: 'status',
 				logged: false,
 				status: 'initial',
+
 				account: (action as InitAction).account,
 			}),
 		},
@@ -172,6 +182,114 @@ const reducer = (
 							state: 'status',
 							status: 'success',
 							statusData: action.statusData,
+							sessionCookies: [
+								{
+									name: 'ssid',
+									value:
+										'ghy-052915-ZI4XJ2UBLGmxxZ1XogfNiMQSDWd0Fx-__-531535528-__-1811618560806--RRR_0-RRR_0',
+									domain: '.mercadopago.com.ar',
+									path: '/',
+									expires: 1751570561.127225,
+									size: 88,
+									httpOnly: true,
+									secure: true,
+									session: false,
+									sameSite: 'None',
+									priority: 'Medium',
+									sameParty: false,
+									sourceScheme: 'Secure',
+								},
+								{
+									name: 'orguseridp',
+									value: '531535528',
+									domain: '.mercadopago.com.ar',
+									path: '/',
+									expires: 1751570561.127217,
+									size: 19,
+									httpOnly: false,
+									secure: true,
+									session: false,
+									sameSite: 'None',
+									priority: 'Medium',
+									sameParty: false,
+									sourceScheme: 'Secure',
+								},
+								{
+									name: 'orguserid',
+									value: 'Z9H90h9H99Z7',
+									domain: '.mercadopago.com.ar',
+									path: '/',
+									expires: 1751570561.127139,
+									size: 21,
+									httpOnly: false,
+									secure: true,
+									session: false,
+									sameSite: 'None',
+									priority: 'Medium',
+									sameParty: false,
+									sourceScheme: 'Secure',
+								},
+								{
+									name: 'orgnickp',
+									value: 'MIXAR_SA',
+									domain: '.mercadopago.com.ar',
+									path: '/',
+									expires: 1751570561.127179,
+									size: 16,
+									httpOnly: false,
+									secure: true,
+									session: false,
+									sameSite: 'None',
+									priority: 'Medium',
+									sameParty: false,
+									sourceScheme: 'Secure',
+								},
+								{
+									name: 'ftid',
+									value: '1H2qonm5VBtvNa7D2fUssP9qlQUBkIDe-1717010512144',
+									domain: '.mercadopago.com.ar',
+									path: '/',
+									expires: 1751570561.127203,
+									size: 50,
+									httpOnly: true,
+									secure: true,
+									session: false,
+									sameSite: 'None',
+									priority: 'Medium',
+									sameParty: false,
+									sourceScheme: 'Secure',
+								},
+								{
+									name: '_mldataSessionId',
+									value: '3f18ff37-de58-4357-b344-02baa0fe1fb1',
+									domain: '.mercadopago.com.ar',
+									path: '/',
+									expires: 1717012360,
+									size: 52,
+									httpOnly: false,
+									secure: true,
+									session: false,
+									sameSite: 'None',
+									priority: 'Medium',
+									sameParty: false,
+									sourceScheme: 'Secure',
+								},
+								{
+									name: '_d2id',
+									value: '54dadb13-255e-41ee-94e3-97c26c5395b4-n',
+									domain: '.mercadopago.com.ar',
+									path: '/',
+									expires: 1748546547.379843,
+									size: 43,
+									httpOnly: false,
+									secure: true,
+									session: false,
+									sameSite: 'None',
+									priority: 'Medium',
+									sameParty: false,
+									sourceScheme: 'Secure',
+								},
+							],
 						} satisfies Status_SuccessState;
 					if ('error' in action) {
 						return {
@@ -210,7 +328,52 @@ const reducer = (
 				return state;
 			},
 		},
-		scrap: {},
+		scrap: {
+			scrap: (state, action) => {
+				const {status, account} = state as WithStatusState;
+				if (status === 'initial')
+					return {
+						...state,
+						state: 'scrap',
+						status: 'loading',
+
+						account,
+					} satisfies Scrap_LoadingState;
+
+				if (status === 'loading' && 'error' in action)
+					return {
+						...state,
+						state: 'scrap',
+						status: 'error',
+						error: action.error,
+						account,
+					} satisfies Scrap_ErrorState;
+
+				if (status === 'loading' && 'scrapData' in action)
+					return {
+						...state,
+						state: 'scrap',
+						status: 'success',
+						scrapData: action.scrapData,
+						account,
+					} satisfies Scrap_SuccessState;
+
+				return state;
+			},
+			back: state => {
+				const {account, status} = state as WithStatusState;
+				return status === 'loading'
+					? state
+					: {...state, state: 'idle', account};
+			},
+
+			exec: (state, action) => {
+				const {status} = state as WithStatusState;
+				if (status === 'error' || status === 'success')
+					return execHandler(state, action);
+				return state;
+			},
+		},
 	};
 
 	return stateMachine[state.state]?.[action.type]?.(state, action) ?? state;
@@ -237,8 +400,11 @@ export const AccountControllerProvider: React.FC<{
 					// Get status
 					const fetch = async () => {
 						setTimeout(() => {
-							dispatch({type: 'fetch', statusData: 'logged'});
-						}, 2000);
+							dispatch({
+								type: 'fetch',
+								statusData: 'logged',
+							} satisfies Fetch_SuccessAction);
+						}, 10);
 					};
 
 					fetch();
@@ -246,6 +412,32 @@ export const AccountControllerProvider: React.FC<{
 
 				// if (status === 'success' || status === 'error')
 				// 	return dispatch({type: 'back'});
+			},
+			scrap: () => {
+				const {status, account, sessionCookies} = state as ScrapState;
+				if (status === 'initial') {
+					return dispatch({type: 'scrap'} satisfies Scrap_InitialAction);
+				}
+
+				if (status === 'loading') {
+					if (sessionCookies === undefined)
+						return dispatch({
+							type: 'scrap',
+							error: 'Primero debes loguear',
+						} satisfies Scrap_ErrorAction);
+
+					scrap({account, sessionCookies}).then(res =>
+						'error' in res
+							? dispatch({
+									type: 'scrap',
+									error: res.error,
+							  } satisfies Scrap_ErrorAction)
+							: dispatch({
+									type: 'scrap',
+									scrapData: res.data,
+							  } satisfies Scrap_SuccessAction),
+					);
+				}
 			},
 			login: () => {
 				const {status, account} = state as LoginState;

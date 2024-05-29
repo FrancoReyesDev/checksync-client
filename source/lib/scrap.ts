@@ -1,6 +1,7 @@
-import puppeteer from 'puppeteer';
+import puppeteer, {Cookie} from 'puppeteer';
 import {loginWithCookies} from './loginWithCookies.js';
 import {Config} from '../config.js';
+import {steps} from '../../scraperconfig/steps.js';
 
 export const scrap = async ({
 	visible = true,
@@ -8,9 +9,22 @@ export const scrap = async ({
 	account: {...params},
 }: {
 	account: Config['accounts'][number];
-	sessionCookies: puppeteer.Cookie[];
+	sessionCookies: Cookie[];
 	visible?: boolean;
-}) => {
-	const browser = await puppeteer.launch({headless: !visible}); // Cambia a true para ejecución sin interfaz gráfica
-	loginWithCookies({...params, sessionCookies, browser});
+}): Promise<{error: string} | {data: string}> => {
+	try {
+		const browser = await puppeteer.launch({headless: !visible}); // Cambia a true para ejecución sin interfaz gráfica
+		const page = await loginWithCookies({...params, sessionCookies, browser});
+		const scrapSteps = steps[params.scrap.steps];
+		if (scrapSteps === undefined)
+			return {
+				error:
+					'Debes colocar bien el nombre de los steps en scraperconfig/config.json',
+			};
+		await scrapSteps({page, browser});
+		return {data: 'Se ha scrapeado con exito!'};
+	} catch (e) {
+		console.error({scrapError: e});
+		return {error: 'hubo un error al scrapear'};
+	}
 };
