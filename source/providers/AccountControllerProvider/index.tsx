@@ -69,11 +69,10 @@ const execHandler = (
 		} satisfies Login_InitialState,
 		logout: {
 			...state,
-
-			state: 'logout',
-			status: 'initial',
+			state: 'idle',
+			sessionCookies: undefined,
 			account,
-		} satisfies Logout_InitialState,
+		} satisfies IdleState,
 		status: {
 			...state,
 
