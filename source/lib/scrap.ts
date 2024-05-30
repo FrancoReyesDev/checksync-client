@@ -2,6 +2,7 @@ import puppeteer, {Cookie} from 'puppeteer';
 import {loginWithCookies} from './loginWithCookies.js';
 import {Config} from '../config.js';
 import {steps} from '../../scraperconfig/steps.js';
+import fs from 'fs';
 
 export const scrap = async ({
 	visible = true,
@@ -23,13 +24,19 @@ export const scrap = async ({
 				error:
 					'Debes colocar bien el nombre de los steps en scraperconfig/config.json',
 			};
-		await scrapSteps({
+		const detailedMovements = await scrapSteps({
 			page,
 			browser,
 			statusData,
 			startFromId: params.scrap.startFromdId,
 			maxPage: params.scrap.maxPage,
 		});
+
+		fs.writeFileSync(
+			'./movements.json',
+			JSON.stringify(detailedMovements, null, 2),
+		);
+
 		return {data: 'Se ha scrapeado con exito!'};
 	} catch (e) {
 		console.error({scrapError: e});
