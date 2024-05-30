@@ -7,8 +7,10 @@ export const scrap = async ({
 	visible = true,
 	sessionCookies,
 	account: {...params},
+	statusData,
 }: {
 	account: Config['accounts'][number];
+	statusData?: {lastId: string; cookiesExpiration: number};
 	sessionCookies: Cookie[];
 	visible?: boolean;
 }): Promise<{error: string} | {data: string}> => {
@@ -21,7 +23,13 @@ export const scrap = async ({
 				error:
 					'Debes colocar bien el nombre de los steps en scraperconfig/config.json',
 			};
-		await scrapSteps({page, browser});
+		await scrapSteps({
+			page,
+			browser,
+			statusData,
+			startFromId: params.scrap.startFromdId,
+			maxPage: params.scrap.maxPage,
+		});
 		return {data: 'Se ha scrapeado con exito!'};
 	} catch (e) {
 		console.error({scrapError: e});

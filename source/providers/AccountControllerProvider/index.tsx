@@ -292,9 +292,13 @@ export const AccountControllerProvider: React.FC<{
 					// Get status
 					const fetch = async () => {
 						setTimeout(() => {
+							//fake status success
 							dispatch({
 								type: 'fetch',
-								statusData: 'logged',
+								statusData: {
+									lastId: '75755260635',
+									cookiesExpiration: 1719759874000,
+								},
 							} satisfies Fetch_SuccessAction);
 						}, 10);
 					};
@@ -306,7 +310,8 @@ export const AccountControllerProvider: React.FC<{
 				// 	return dispatch({type: 'back'});
 			},
 			scrap: () => {
-				const {status, account, sessionCookies} = state as ScrapState;
+				const {status, account, sessionCookies, statusData} =
+					state as ScrapState;
 				if (status === 'initial') {
 					return dispatch({type: 'scrap'} satisfies Scrap_InitialAction);
 				}
@@ -318,7 +323,7 @@ export const AccountControllerProvider: React.FC<{
 							error: 'Primero debes loguear',
 						} satisfies Scrap_ErrorAction);
 
-					scrap({account, sessionCookies}).then(res =>
+					scrap({account, sessionCookies, statusData}).then(res =>
 						'error' in res
 							? dispatch({
 									type: 'scrap',

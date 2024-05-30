@@ -52,7 +52,7 @@ const AccountControllerView: React.FC = () => {
 				default: 'Scrapea ahora mismo en local y revisa los pasos del bot',
 				error: 'Ha ocurrido un error: ' + (state as Scrap_ErrorState).error,
 				success: 'Se ha scrapeado con exito!',
-				loading: 'Enviando peticion...',
+				loading: 'Scrapeando...',
 				initial: 'Iniciando scraper',
 			},
 			status: {

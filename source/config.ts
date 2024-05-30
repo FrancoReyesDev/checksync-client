@@ -16,6 +16,8 @@ const configSchema = z.object({
 			scrap: z.object({
 				frequency: z.number(),
 				steps: z.string(),
+				startFromId: z.string(),
+				maxPage: z.number(),
 			}),
 		}),
 	),
@@ -48,6 +50,8 @@ export interface Config {
 		scrap: {
 			frequency: number;
 			steps: string;
+			startFromdId: string; // Fecha en dd/mm/yyyy
+			maxPage: number;
 		};
 	}[];
 }

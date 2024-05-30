@@ -8,7 +8,7 @@ export type Actions = 'login' | 'logout' | 'status' | 'scrap';
 // States
 export interface FetchedState {
 	account: Config['accounts'][number];
-	statusData?: string;
+	statusData?: {lastId: string; cookiesExpiration: number};
 	sessionCookies?: Cookie[];
 }
 
@@ -94,7 +94,7 @@ export interface Status_ErrorState extends FetchedState {
 export interface Status_SuccessState extends FetchedState {
 	state: 'status';
 	status: 'success';
-	statusData: string;
+	statusData: {lastId: string; cookiesExpiration: number};
 }
 
 export type StatusState =
@@ -148,7 +148,7 @@ export type Fetch_InitialAction = {
 };
 
 export interface Fetch_SuccessAction extends Fetch_InitialAction {
-	statusData: string;
+	statusData: {lastId: string; cookiesExpiration: number};
 }
 
 export interface Fetch_ErrorAction extends Fetch_InitialAction {
