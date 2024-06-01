@@ -1,31 +1,30 @@
 import React from 'react';
 import {Box, Text} from 'ink';
-import {AppProvider, useApp} from './providers/AppProvider.js';
 import {AccountSelector} from './views/AccountSelector.js';
 import {AccountController} from './views/AccountController.js';
 import {ExitDialog} from './views/ExitDialog.js';
-import {isValidConfig} from './config.js';
-
-// type Props = {
-// 	name: string | undefined;
-// };
+import {
+	AppControllerProvider,
+	useAppController,
+} from './providers/AppController/provider.js';
+import {isValidConfig} from 'checksync-scraper/utils/isValidConfig.js';
 
 const View: React.FC = () => {
-	const [{view}] = useApp();
+	const [{state}] = useAppController();
 
-	if (view === 'exitDialog') return <ExitDialog />;
-	if (view === 'accountController') return <AccountController />;
+	if (state === 'exitDialog') return <ExitDialog />;
+	if (state === 'accountController') return <AccountController />;
 	return <AccountSelector />;
 };
 
 const App = () =>
 	isValidConfig() ? (
-		<AppProvider>
+		<AppControllerProvider>
 			<Box flexDirection="column" gap={1} padding={1}>
 				<Text backgroundColor={'blue'}> Check Sync Client </Text>
 				<View />
 			</Box>
-		</AppProvider>
+		</AppControllerProvider>
 	) : (
 		<Box flexDirection="column" gap={1} padding={1}>
 			<Text backgroundColor={'blue'}> Check Sync Client </Text>

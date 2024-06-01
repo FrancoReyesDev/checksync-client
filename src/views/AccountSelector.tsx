@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Box, Text, useInput} from 'ink';
-import {Config, config} from '../config.js';
-import {useApp} from '../providers/AppProvider.js';
+import {useAppController} from 'src/providers/AppController/provider.js';
+import config from 'checksync-scraper/config.json';
+import {Config} from 'checksync-scraper/types/Config.js';
 
 export const AccountSelector: React.FC = () => {
-	const [, dispatch] = useApp();
+	const [, dispatch] = useAppController();
 	const [selectedAccount, setSelectedAccount] = useState<string>('');
 	const accounts = config.accounts.map(account => account);
 

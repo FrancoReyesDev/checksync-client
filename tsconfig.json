@@ -1,13 +1,18 @@
 {
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
-		"outDir": "dist"
-		// "module": "ESNext",
-		// "moduleResolution": "Bundler",
-		// "target": "ES6",
-		// "resolveJsonModule": true,
-		// "esModuleInterop": true
+		"outDir": "dist",
+		"strict": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"resolveJsonModule": true,
+		"baseUrl": ".",
+		// "paths": {
+		// 	"@src/*": ["./src/*"],
+		// 	"@scraper/*": ["./scraper/*"]
+		// },
+		"esModuleInterop": true
 	},
-	"include": ["source"]
-	// "exclude": ["scrapeconfig"]
+	"include": ["**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
 }

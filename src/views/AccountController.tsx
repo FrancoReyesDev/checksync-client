@@ -1,36 +1,35 @@
 import React, {useState} from 'react';
 import {Box, Newline, Text, useInput} from 'ink';
+
+import config from 'checksync-scraper/config.json';
 import {
-	AccountControllerState as AppAccountControllerState,
-	useApp,
-} from '../providers/AppProvider.js';
+	Login_ErrorState,
+	Logout_ErrorState,
+	Scrap_ErrorState,
+	Status_ErrorState,
+} from 'src/types/providers/accountController/states.js';
+import {useAppController} from 'src/providers/AppController/provider.js';
 import {
 	AccountControllerProvider,
 	useAccountController,
-} from '../providers/AccountControllerProvider/index.js';
-import {
-	Actions,
-	AccountControllerState,
-	WithStatusState,
-	Login_ErrorState,
-	Scrap_ErrorState,
-	Logout_ErrorState,
-} from '../providers/AccountControllerProvider/types/index.js';
-import {config} from '../config.js';
-
-type LogMachine = {
-	[state in Exclude<AccountControllerState['state'], 'idle' | 'initial'>]: {
-		[status in WithStatusState['status'] | 'default']: string;
-	};
-};
+} from 'src/providers/AccountController/provider.js';
+import {States} from 'src/types/providers/common.js';
+import {AccountController_AppControllerState} from 'src/types/providers/appController/states.js';
+import {LogMachine} from 'src/types/views/AccountController.js';
 
 const AccountControllerView: React.FC = () => {
-	const [appState, appDispatch] = useApp();
+	const [appState, appDispatch] = useAppController();
 	const [state, dispatch] = useAccountController();
 
-	const [selectedAction, setSelectedAction] = useState<Actions>('login');
+	const [selectedAction, setSelectedAction] =
+		useState<Exclude<States, 'idle'>>('login');
 
-	const actionsKeys: Actions[] = ['status', 'login', 'scrap', 'logout'];
+	const actionsKeys: Exclude<States, 'idle'>[] = [
+		'status',
+		'login',
+		'scrap',
+		'logout',
+	];
 
 	const getActionLog = () => {
 		const logMachine: LogMachine = {
@@ -57,18 +56,20 @@ const AccountControllerView: React.FC = () => {
 			},
 			status: {
 				default: 'Consulta el estado de la conexion',
-				error: 'Ha ocurrido un error: ' + (state as Scrap_ErrorState).error,
+				error: 'Ha ocurrido un error: ' + (state as Status_ErrorState).error,
 				success: 'Consulta exitosa!',
 				loading: 'Cargando consulta...',
 				initial: 'Enviando consulta',
 			},
 		};
 
-		return 'status' in state &&
-			logMachine[state.state] !== undefined &&
-			logMachine[state.state][state.status] !== undefined
-			? {log: logMachine[state.state][state.status]}
-			: {log: logMachine[selectedAction]['default'], status: 'idle'};
+		const log =
+			('status' in state && logMachine?.[state.state]?.[state.status]) ||
+			logMachine[selectedAction]['default'];
+
+		const status = 'status' in state ? state.status : 'idle';
+
+		return {log, status};
 	};
 
 	const {status, log} = getActionLog();
@@ -108,11 +109,11 @@ const AccountControllerView: React.FC = () => {
 					Cuenta:{' '}
 					<Text
 						backgroundColor={
-							(appState as AppAccountControllerState).account.color
+							(appState as AccountController_AppControllerState).account.color
 						}
 						bold
 					>
-						{(appState as AppAccountControllerState).account.id}
+						{(appState as AccountController_AppControllerState).account.id}
 					</Text>
 				</Text>
 				<Text>
