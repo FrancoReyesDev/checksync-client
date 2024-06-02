@@ -4,18 +4,18 @@ const os = require('os');
 
 const isWindows = os.platform() === 'win32';
 
-if (fs.existsSync('scraperconfig')) {
+if (fs.existsSync('checksync-scraper')) {
 	if (isWindows) {
-		execSync('rd /s /q scraperconfig');
+		execSync('rd /s /q checksync-scraper');
 	} else {
-		execSync('rm -rf scraperconfig');
+		execSync('rm -rf checksync-scraper');
 	}
 }
 
 const submoduleAdd = () => {
 	try {
 		execSync(
-			'git submodule add https://github.com/FrancoReyesDev/checkSync-scraperConfig.git scraperconfig',
+			'git submodule add https://github.com/FrancoReyesDev/checkSync-scraperConfig.git checksync-scraper',
 		);
 	} catch {}
 };

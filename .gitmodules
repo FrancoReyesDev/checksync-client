@@ -1,3 +1,4 @@
 [submodule "checksync-scraper"]
 	path = checksync-scraper
 	url = https://github.com/FrancoReyesDev/checksync-scraperconfig.git
+
