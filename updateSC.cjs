@@ -15,7 +15,7 @@ if (fs.existsSync('checksync-scraper')) {
 const submoduleAdd = () => {
 	try {
 		execSync(
-			'git submodule  add --force https://github.com/FrancoReyesDev/checkSync-scraperConfig.git checksync-scraper',
+			'git submodule  add https://github.com/FrancoReyesDev/checkSync-scraperConfig.git checksync-scraper',
 		);
 	} catch {}
 };
