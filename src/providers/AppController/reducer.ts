@@ -1,13 +1,17 @@
 import {
 	AppControllerAction,
-	SelectAccountAction,
+	SelectScraperAction,
 } from 'src/types/providers/appController/actions.js';
 import {
-	AccountController_AppControllerState,
+	ScraperController_AppControllerState,
+	ScraperSelector_AppControllerState,
 	AppControllerState,
 	ExitDialogState,
 } from 'src/types/providers/appController/states.js';
 import {TransitionsMachine} from 'src/types/providers/common.js';
+
+const back = (state: AppControllerState) =>
+	({...state, state: 'exitDialog'} satisfies ExitDialogState);
 
 export const reducer = (
 	state: AppControllerState,
@@ -18,19 +22,24 @@ export const reducer = (
 		AppControllerAction
 	> = {
 		exitDialog: {
-			cancelExit: () => ({state: 'accountSelector'}),
-		},
-		accountSelector: {
-			back: () => ({state: 'exitDialog'} satisfies ExitDialogState),
-			select: (_, action) =>
+			cancelExit: state =>
 				({
-					state: 'accountController',
-					account: (action as SelectAccountAction).account,
-				} satisfies AccountController_AppControllerState),
+					...state,
+					state: 'scraperSelector',
+				} satisfies ScraperSelector_AppControllerState),
 		},
-		accountController: {
-			back: () => ({state: 'accountSelector'}),
-			backToExit: () => ({state: 'exitDialog'}),
+		scraperSelector: {
+			back: back,
+			select: (state, action) =>
+				({
+					...state,
+					state: 'scraperController',
+					scraper: (action as SelectScraperAction).scraper,
+				} satisfies ScraperController_AppControllerState),
+		},
+		scraperController: {
+			back: back,
+			backToExit: state => ({...state, state: 'exitDialog'}),
 		},
 	};
 

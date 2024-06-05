@@ -1,4 +1,4 @@
-import {Config} from 'checksync-scraper/types/Config.js';
+import {Scraper} from 'checksync-scraper';
 
 export type CancelExit = {
 	type: 'cancelExit';
@@ -7,9 +7,9 @@ export type BackAction = {
 	type: 'back';
 };
 
-export type SelectAccountAction = {
+export type SelectScraperAction = {
 	type: 'select';
-	account: Config['accounts'][number];
+	scraper: Scraper;
 };
 
 export type BackToExit = {
@@ -21,6 +21,6 @@ export type BackToExit = {
  */
 export type AppControllerAction =
 	| BackAction
-	| SelectAccountAction
+	| SelectScraperAction
 	| CancelExit
 	| BackToExit;

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, useApp as useInkApp, useInput} from 'ink';
-import {useAppController} from 'src/providers/AppController/provider.js';
+import {useAppController} from '../providers/AppController/provider.js';
 
 export const ExitDialog: React.FC = () => {
 	const [_, dispatch] = useAppController();

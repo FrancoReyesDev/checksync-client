@@ -1,38 +1,35 @@
-import {AccountControllerTransition} from 'src/types/providers/accountController/common.js';
+import {ScraperControllerTransition} from 'src/types/providers/scraperController/common.js';
 import {
+	ScrapState,
 	Scrap_ErrorState,
 	Scrap_LoadingState,
 	Scrap_SuccessState,
-	WithStatusState,
-} from 'src/types/providers/accountController/states.js';
+} from 'src/types/providers/scraperController/states.js';
 
-export const scrapHandler: AccountControllerTransition = (state, action) => {
-	const {status, account} = state as WithStatusState;
+export const scrapHandler: ScraperControllerTransition = (state, action) => {
+	const {status, scraper} = state as ScrapState;
 	if (status === 'initial')
 		return {
-			...state,
 			state: 'scrap',
 			status: 'loading',
 
-			account,
+			scraper,
 		} satisfies Scrap_LoadingState;
 
 	if (status === 'loading' && 'error' in action)
 		return {
-			...state,
 			state: 'scrap',
 			status: 'error',
 			error: action.error,
-			account,
+			scraper,
 		} satisfies Scrap_ErrorState;
 
 	if (status === 'loading' && 'scrapData' in action)
 		return {
-			...state,
 			state: 'scrap',
 			status: 'success',
 			scrapData: action.scrapData,
-			account,
+			scraper,
 		} satisfies Scrap_SuccessState;
 
 	return state;

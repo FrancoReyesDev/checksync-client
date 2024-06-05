@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 import React from 'react';
 import {render} from 'ink';
-// import meow from 'meow';
+
 import App from './app.js';
 
+render(<App />);
+
+// import meow from 'meow';
 // const cli = meow();
 // 	`
 // 	Usage
@@ -27,4 +30,3 @@ import App from './app.js';
 // );
 
 // name={cli.flags.name}
-render(<App />);

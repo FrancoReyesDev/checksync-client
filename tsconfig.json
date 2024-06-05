@@ -7,12 +7,14 @@
 		"moduleResolution": "NodeNext",
 		"resolveJsonModule": true,
 		"baseUrl": ".",
-		// "paths": {
-		// 	"@src/*": ["./src/*"],
+		"rootDir": "src",
+		"paths": {
+			"@src/*": ["./src/*"]
+		},
 		// 	"@scraper/*": ["./scraper/*"]
 		// },
 		"esModuleInterop": true
 	},
 	"include": ["**/*.ts", "**/*.tsx"],
-	"exclude": ["node_modules"]
+	"exclude": ["node_modules", "checksync-scraper"]
 }

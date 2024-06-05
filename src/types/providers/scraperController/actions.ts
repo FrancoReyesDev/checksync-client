@@ -1,13 +1,9 @@
-import {LoginHandler} from 'checksync-scraper/lib/loginClosure.js';
-import {Config} from 'checksync-scraper/types/Config.js';
-import {Cookie} from 'puppeteer';
+// import {Config} from 'checksync-scraper/types/Config.js';
+// import {Cookie} from 'puppeteer';
 import {States} from '../common.js';
+import {LoginClientHandler} from 'checksync-scraper';
 
 // Actions
-export type InitAction = {
-	type: 'init';
-	account: Config['accounts'][number];
-};
 export type Fetch_InitialAction = {
 	type: 'fetch';
 };
@@ -24,11 +20,6 @@ export type Scrap_InitialAction = {
 	type: 'scrap';
 };
 
-export interface Scrap_LoadingAction extends Scrap_InitialAction {
-	account: Config['accounts'][number];
-	sessionCookies: Cookie[];
-}
-
 export interface Scrap_ErrorAction extends Scrap_InitialAction {
 	error: string;
 }
@@ -39,7 +30,6 @@ export interface Scrap_SuccessAction extends Scrap_InitialAction {
 
 export type ScrapAction =
 	| Scrap_InitialAction
-	| Scrap_LoadingAction
 	| Scrap_ErrorAction
 	| Scrap_SuccessAction;
 
@@ -59,7 +49,7 @@ export type FetchAction =
 
 export type Login_InitialAction = {
 	type: 'login';
-	loginHandler: LoginHandler;
+	loginHandler: LoginClientHandler;
 };
 
 export interface Login_ErrorAction extends Login_InitialAction {
@@ -67,7 +57,7 @@ export interface Login_ErrorAction extends Login_InitialAction {
 }
 
 export interface Login_SuccessAction extends Login_InitialAction {
-	sessionCookies: Cookie[];
+	// sessionCookies: Cookie[];
 }
 
 export type LoginAction =
@@ -75,10 +65,9 @@ export type LoginAction =
 	| Login_ErrorAction
 	| Login_SuccessAction;
 
-export type AccountControllerAction =
+export type ScraperControllerAction =
 	| ScrapAction
 	| BackAction
 	| FetchAction
-	| InitAction
 	| ExecAction
 	| LoginAction;

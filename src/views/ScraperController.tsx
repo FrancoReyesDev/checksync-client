@@ -1,25 +1,26 @@
 import React, {useState} from 'react';
 import {Box, Newline, Text, useInput} from 'ink';
 
-import config from 'checksync-scraper/config.json';
 import {
 	Login_ErrorState,
 	Logout_ErrorState,
 	Scrap_ErrorState,
 	Status_ErrorState,
-} from 'src/types/providers/accountController/states.js';
-import {useAppController} from 'src/providers/AppController/provider.js';
+} from '../types/providers/scraperController/states.js';
+import {useAppController} from '../providers/AppController/provider.js';
 import {
-	AccountControllerProvider,
-	useAccountController,
-} from 'src/providers/AccountController/provider.js';
-import {States} from 'src/types/providers/common.js';
-import {AccountController_AppControllerState} from 'src/types/providers/appController/states.js';
-import {LogMachine} from 'src/types/views/AccountController.js';
+	ScraperControllerProvider,
+	useScraperController,
+} from '../providers/ScraperController/provider.js';
+import {States} from '../types/providers/common.js';
+import {ScraperController_AppControllerState} from '../types/providers/appController/states.js';
+import {LogMachine} from '../types/views/ScraperController.js';
 
-const AccountControllerView: React.FC = () => {
+const ScraperControllerView: React.FC = () => {
 	const [appState, appDispatch] = useAppController();
-	const [state, dispatch] = useAccountController();
+	const [state, dispatch] = useScraperController();
+
+	const {scrapers} = appState;
 
 	const [selectedAction, setSelectedAction] =
 		useState<Exclude<States, 'idle'>>('login');
@@ -75,7 +76,7 @@ const AccountControllerView: React.FC = () => {
 	const {status, log} = getActionLog();
 
 	useInput((_, key) => {
-		if (_ === 'c') console.log(state);
+		if (_ === 'c') console.log(state.scraper.getSessionCookies());
 
 		if ((key.leftArrow || key.rightArrow) && state.state !== 'idle')
 			dispatch({type: 'back'});
@@ -96,7 +97,7 @@ const AccountControllerView: React.FC = () => {
 
 		if (key.escape)
 			return state.state === 'idle'
-				? config.accounts.length === 1
+				? Object.keys(scrapers).length === 1
 					? appDispatch({type: 'backToExit'})
 					: appDispatch({type: 'back'})
 				: dispatch({type: 'back'});
@@ -109,17 +110,30 @@ const AccountControllerView: React.FC = () => {
 					Cuenta:{' '}
 					<Text
 						backgroundColor={
-							(appState as AccountController_AppControllerState).account.color
+							(
+								appState as ScraperController_AppControllerState
+							).scraper.getConfig().color
 						}
 						bold
 					>
-						{(appState as AccountController_AppControllerState).account.id}
+						{
+							(
+								appState as ScraperController_AppControllerState
+							).scraper.getConfig().name
+						}
 					</Text>
 				</Text>
 				<Text>
 					Estado:{' '}
-					<Text bold color={'sessionCookies' in state ? 'green' : 'red'}>
-						{'sessionCookies' in state ? 'logueado' : 'sin loguear'}
+					<Text
+						bold
+						color={
+							state.scraper.getSessionCookies().length > 0 ? 'green' : 'red'
+						}
+					>
+						{state.scraper.getSessionCookies().length > 0
+							? 'logueado'
+							: 'sin loguear'}
 					</Text>
 				</Text>
 			</Box>
@@ -175,8 +189,14 @@ const AccountControllerView: React.FC = () => {
 	);
 };
 
-export const AccountController: React.FC = () => (
-	<AccountControllerProvider>
-		<AccountControllerView />
-	</AccountControllerProvider>
-);
+export const ScraperController: React.FC = () => {
+	const [state] = useAppController();
+
+	return (
+		<ScraperControllerProvider
+			scraper={(state as ScraperController_AppControllerState).scraper}
+		>
+			<ScraperControllerView />
+		</ScraperControllerProvider>
+	);
+};

@@ -1,18 +1,17 @@
-import {AccountControllerTransition} from 'src/types/providers/accountController/common.js';
+import {ScraperControllerTransition} from '../../../types/providers/scraperController/common.js';
 import {
 	IdleState,
 	StatusState,
 	Status_ErrorState,
 	Status_LoadingState,
 	Status_SuccessState,
-} from 'src/types/providers/accountController/states.js';
+} from '../../../types/providers/scraperController/states.js';
 
-export const fetchHandler: AccountControllerTransition = (state, action) => {
-	const {status, account} = state as StatusState;
+export const fetchHandler: ScraperControllerTransition = (state, action) => {
+	const {status, scraper} = state as StatusState;
 	if (status === 'initial')
 		return {
-			...state,
-			account,
+			scraper,
 			state: 'status',
 			status: 'loading',
 		} satisfies Status_LoadingState;
@@ -20,16 +19,14 @@ export const fetchHandler: AccountControllerTransition = (state, action) => {
 	if (status === 'loading') {
 		if ('statusData' in action)
 			return {
-				...state,
-				account,
+				scraper,
 				state: 'status',
 				status: 'success',
 				statusData: action.statusData,
 			} satisfies Status_SuccessState;
 		if ('error' in action) {
 			return {
-				...state,
-				account,
+				scraper,
 				state: 'status',
 				status: 'error',
 				error: action.error,
@@ -37,15 +34,11 @@ export const fetchHandler: AccountControllerTransition = (state, action) => {
 		}
 	}
 
-	// Actualmente fetch no funciona, es sintetico, pero luego recibira la informacion desde el servidor.
+	// Actualmente fetch no funciona, es sintetico, pero luego recibira la informacion desde el servidor. Basicamnete replicara la session cookie en las instancias locales y en la base de datos local guardara los movements del scraper.
 	if (status === 'error' || status === 'success')
 		return {
-			...state,
-			account: account,
+			scraper,
 			state: 'idle',
-			statusData: 'statusData' in state ? state.statusData : undefined,
-			sessionCookies:
-				'sessionCookies' in state ? state.sessionCookies : undefined,
 		} satisfies IdleState;
 
 	return state;

@@ -1,19 +1,18 @@
-import {LoginAction} from 'src/types/providers/accountController/actions.js';
-import {AccountControllerTransition} from 'src/types/providers/accountController/common.js';
+import {LoginAction} from '../../../types/providers/scraperController/actions.js';
+import {ScraperControllerTransition} from '../../../types/providers/scraperController/common.js';
 import {
 	LoginState,
 	Login_ErrorState,
 	Login_LoadingState,
 	Login_SuccessState,
-} from 'src/types/providers/accountController/states.js';
+} from '../../../types/providers/scraperController/states.js';
 
-export const loginHandler: AccountControllerTransition = (state, action) => {
-	const {status, account} = state as LoginState;
+export const loginHandler: ScraperControllerTransition = (state, action) => {
+	const {status, scraper} = state as LoginState;
 	if (status === 'initial') {
 		const {loginHandler} = action as LoginAction;
 		return {
-			...state,
-			account,
+			scraper,
 			loginHandler,
 			state: 'login',
 			status: 'loading',
@@ -23,21 +22,18 @@ export const loginHandler: AccountControllerTransition = (state, action) => {
 	if (status === 'loading') {
 		if ('error' in action) {
 			return {
-				...state,
-				account,
+				scraper,
 				state: 'login',
 				status: 'error',
 				error: action.error,
 			} satisfies Login_ErrorState;
 		}
 
-		if ('sessionCookies' in action) {
+		if (scraper.getSessionCookies().length > 0) {
 			return {
-				...state,
-				account,
+				scraper,
 				state: 'login',
 				status: 'success',
-				sessionCookies: action.sessionCookies,
 			} satisfies Login_SuccessState;
 		}
 	}

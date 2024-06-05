@@ -1,18 +1,22 @@
-import {Config} from 'checksync-scraper/types/Config.js';
+import {Scraper, Scrapers} from 'checksync-scraper';
 
-export type ExitDialogState = {
+type State = {
+	scrapers: Scrapers;
+};
+
+export interface ExitDialogState extends State {
 	state: 'exitDialog';
-};
-export type AccountSelector_AppControllerState = {
-	state: 'accountSelector';
-};
+}
+export interface ScraperSelector_AppControllerState extends State {
+	state: 'scraperSelector';
+}
 
-export type AccountController_AppControllerState = {
-	state: 'accountController';
-	account: Config['accounts'][number];
-};
+export interface ScraperController_AppControllerState extends State {
+	state: 'scraperController';
+	scraper: Scraper;
+}
 
 export type AppControllerState =
-	| AccountSelector_AppControllerState
-	| AccountController_AppControllerState
+	| ScraperSelector_AppControllerState
+	| ScraperController_AppControllerState
 	| ExitDialogState;

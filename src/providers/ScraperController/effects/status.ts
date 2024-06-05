@@ -1,8 +1,8 @@
-import {StatusState} from 'src/types/providers/accountController/states.js';
-import {Fetch_SuccessAction} from 'src/types/providers/accountController/actions.js';
-import {AccountControllerEffect} from 'src/types/providers/accountController/common.js';
+import {StatusState} from 'src/types/providers/scraperController/states.js';
+import {Fetch_SuccessAction} from 'src/types/providers/scraperController/actions.js';
+import {ScraperControllerEffect} from 'src/types/providers/scraperController/common.js';
 
-export const statusEffect: AccountControllerEffect = (state, dispatch) => {
+export const statusEffect: ScraperControllerEffect = (state, dispatch) => {
 	const {status} = state as StatusState;
 	if (status === 'initial') return dispatch({type: 'fetch'});
 	if (status === 'loading') {
