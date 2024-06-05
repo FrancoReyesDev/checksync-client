@@ -16,5 +16,5 @@
 		"esModuleInterop": true
 	},
 	"include": ["**/*.ts", "**/*.tsx"],
-	"exclude": ["node_modules", "checksync-scraper"]
+	"exclude": ["node_modules", "checksync-scraper", "session"]
 }

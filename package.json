@@ -20,7 +20,6 @@
 	],
 	"dependencies": {
 		"checksync-scraper": "file:checksync-scraper",
-		"date-fns": "^3.6.0",
 		"ink": "^4.1.0",
 		"react": "^18.2.0"
 	},
@@ -37,7 +36,6 @@
 		"ink-testing-library": "^3.0.0",
 		"prettier": "^2.8.7",
 		"simple-git": "^3.24.0",
-		"ts-node": "^10.9.1",
 		"typescript": "^5.0.3",
 		"xo": "^0.53.1"
 	},
