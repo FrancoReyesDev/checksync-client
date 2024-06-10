@@ -4,7 +4,7 @@ import {Box, Newline, Text, useInput} from 'ink';
 import {
 	Login_ErrorState,
 	Logout_ErrorState,
-	Scrap_ErrorState,
+	// Scrap_ErrorState,
 	Status_ErrorState,
 } from '../types/providers/scraperController/states.js';
 import {useAppController} from '../providers/AppController/provider.js';
@@ -25,12 +25,7 @@ const ScraperControllerView: React.FC = () => {
 	const [selectedAction, setSelectedAction] =
 		useState<Exclude<States, 'idle'>>('login');
 
-	const actionsKeys: Exclude<States, 'idle'>[] = [
-		'status',
-		'login',
-		'scrap',
-		'logout',
-	];
+	const actionsKeys: Exclude<States, 'idle'>[] = ['status', 'login', 'logout'];
 
 	const getActionLog = () => {
 		const logMachine: LogMachine = {
@@ -48,13 +43,13 @@ const ScraperControllerView: React.FC = () => {
 				loading: 'Deslogueando...',
 				initial: 'Iniciando deslogueo',
 			},
-			scrap: {
-				default: 'Scrapea ahora mismo en local y revisa los pasos del bot',
-				error: 'Ha ocurrido un error: ' + (state as Scrap_ErrorState).error,
-				success: 'Se ha scrapeado con exito!',
-				loading: 'Scrapeando...',
-				initial: 'Iniciando scraper',
-			},
+			// scrap: {
+			// 	default: 'Scrapea ahora mismo en local y revisa los pasos del bot',
+			// 	error: 'Ha ocurrido un error: ' + (state as Scrap_ErrorState).error,
+			// 	success: 'Se ha scrapeado con exito!',
+			// 	loading: 'Scrapeando...',
+			// 	initial: 'Iniciando scraper',
+			// },
 			status: {
 				default: 'Consulta el estado de la conexion',
 				error: 'Ha ocurrido un error: ' + (state as Status_ErrorState).error,
@@ -76,7 +71,7 @@ const ScraperControllerView: React.FC = () => {
 	const {status, log} = getActionLog();
 
 	useInput((_, key) => {
-		if (_ === 'c') console.log(state.scraper.getSessionCookies());
+		// if (_ === 'c') console.log(state.scraper.getSessionCookies());
 
 		if ((key.leftArrow || key.rightArrow) && state.state !== 'idle')
 			dispatch({type: 'back'});
@@ -125,15 +120,8 @@ const ScraperControllerView: React.FC = () => {
 				</Text>
 				<Text>
 					Estado:{' '}
-					<Text
-						bold
-						color={
-							state.scraper.getSessionCookies().length > 0 ? 'green' : 'red'
-						}
-					>
-						{state.scraper.getSessionCookies().length > 0
-							? 'logueado'
-							: 'sin loguear'}
+					<Text bold color={state.scraper.getStatus().logged ? 'green' : 'red'}>
+						{state.scraper.getStatus().logged ? 'logueado' : 'sin loguear'}
 					</Text>
 				</Text>
 			</Box>

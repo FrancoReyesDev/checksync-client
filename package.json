@@ -10,7 +10,7 @@
 	"scripts": {
 		"updateSC": "node updateSC.cjs",
 		"build": "tsc",
-		"dev": "tsc --watch",
+		"dev": "tsc-watch --onSuccess \"npm run start\"",
 		"start": "node ./dist/cli.js",
 		"test": "prettier --check . && xo && ava",
 		"push": "git add . && git commit -m \"fast commit\" && git push origin main"
@@ -20,6 +20,7 @@
 	],
 	"dependencies": {
 		"checksync-scraper": "file:checksync-scraper",
+		"dotenv": "^16.4.5",
 		"ink": "^4.1.0",
 		"react": "^18.2.0"
 	},

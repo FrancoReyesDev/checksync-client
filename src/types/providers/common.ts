@@ -1,6 +1,6 @@
 import {Dispatch} from 'react';
 
-export type States = 'login' | 'logout' | 'status' | 'scrap' | 'idle';
+export type States = 'login' | 'logout' | 'status' | 'idle';
 
 export type State = {
 	state: string;

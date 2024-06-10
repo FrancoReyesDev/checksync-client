@@ -5,6 +5,10 @@ export const backHandler: ScraperControllerTransition = state => {
 	const {scraper} = state;
 
 	return 'status' in state && state.status !== 'loading'
-		? ({state: 'idle', scraper} satisfies IdleState)
+		? ({
+				state: 'idle',
+				scraper,
+				scraperStatus: state.scraperStatus,
+		  } satisfies IdleState)
 		: state;
 };

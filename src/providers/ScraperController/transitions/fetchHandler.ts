@@ -14,15 +14,17 @@ export const fetchHandler: ScraperControllerTransition = (state, action) => {
 			scraper,
 			state: 'status',
 			status: 'loading',
+			scraperStatus: state.scraperStatus,
 		} satisfies Status_LoadingState;
 
 	if (status === 'loading') {
-		if ('statusData' in action)
+		if ('scraperStatus' in action)
 			return {
 				scraper,
 				state: 'status',
 				status: 'success',
-				statusData: action.statusData,
+
+				scraperStatus: state.scraperStatus,
 			} satisfies Status_SuccessState;
 		if ('error' in action) {
 			return {
@@ -30,15 +32,16 @@ export const fetchHandler: ScraperControllerTransition = (state, action) => {
 				state: 'status',
 				status: 'error',
 				error: action.error,
+				scraperStatus: state.scraperStatus,
 			} satisfies Status_ErrorState;
 		}
 	}
 
-	// Actualmente fetch no funciona, es sintetico, pero luego recibira la informacion desde el servidor. Basicamnete replicara la session cookie en las instancias locales y en la base de datos local guardara los movements del scraper.
 	if (status === 'error' || status === 'success')
 		return {
 			scraper,
 			state: 'idle',
+			scraperStatus: state.scraperStatus,
 		} satisfies IdleState;
 
 	return state;

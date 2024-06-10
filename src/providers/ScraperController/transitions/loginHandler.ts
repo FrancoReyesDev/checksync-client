@@ -10,12 +10,13 @@ import {
 export const loginHandler: ScraperControllerTransition = (state, action) => {
 	const {status, scraper} = state as LoginState;
 	if (status === 'initial') {
-		const {loginHandler} = action as LoginAction;
+		const {launchLogin} = action as LoginAction;
 		return {
 			scraper,
-			loginHandler,
+			launchLogin,
 			state: 'login',
 			status: 'loading',
+			scraperStatus: state.scraperStatus,
 		} satisfies Login_LoadingState;
 	}
 
@@ -26,14 +27,16 @@ export const loginHandler: ScraperControllerTransition = (state, action) => {
 				state: 'login',
 				status: 'error',
 				error: action.error,
+				scraperStatus: state.scraperStatus,
 			} satisfies Login_ErrorState;
 		}
 
-		if (scraper.getSessionCookies().length > 0) {
+		if (scraper.getStatus().logged) {
 			return {
 				scraper,
 				state: 'login',
 				status: 'success',
+				scraperStatus: state.scraperStatus,
 			} satisfies Login_SuccessState;
 		}
 	}

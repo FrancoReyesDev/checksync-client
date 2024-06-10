@@ -1,7 +1,7 @@
 import {
-	LoginClientHandler,
 	// LoginHandler,
 	Scraper,
+	ScraperStatus,
 } from 'checksync-scraper';
 // import {Cookie} from 'puppeteer';
 
@@ -9,6 +9,7 @@ import {
 
 interface State {
 	scraper: Scraper;
+	scraperStatus: ScraperStatus;
 }
 
 export interface IdleState extends State {
@@ -23,7 +24,7 @@ export interface Login_InitialState extends State {
 export interface Login_LoadingState extends State {
 	state: 'login';
 	status: 'loading';
-	loginHandler: LoginClientHandler;
+	launchLogin: Scraper['launchLogin'];
 }
 
 export interface Login_ErrorState extends State {
@@ -88,7 +89,7 @@ export interface Status_ErrorState extends State {
 export interface Status_SuccessState extends State {
 	state: 'status';
 	status: 'success';
-	statusData: {lastId: string; cookiesExpiration: number};
+	scraperStatus: ScraperStatus;
 }
 
 export type StatusState =
@@ -97,37 +98,37 @@ export type StatusState =
 	| Status_ErrorState
 	| Status_SuccessState;
 
-export interface Scrap_InitialState extends State {
-	state: 'scrap';
-	status: 'initial';
-}
+// export interface Scrap_InitialState extends State {
+// 	state: 'scrap';
+// 	status: 'initial';
+// }
 
-export interface Scrap_LoadingState extends State {
-	state: 'scrap';
-	status: 'loading';
-}
+// export interface Scrap_LoadingState extends State {
+// 	state: 'scrap';
+// 	status: 'loading';
+// }
 
-export interface Scrap_ErrorState extends State {
-	state: 'scrap';
-	status: 'error';
-	error: string;
-}
+// export interface Scrap_ErrorState extends State {
+// 	state: 'scrap';
+// 	status: 'error';
+// 	error: string;
+// }
 
-export interface Scrap_SuccessState extends State {
-	state: 'scrap';
-	status: 'success';
-	scrapData: string;
-}
+// export interface Scrap_SuccessState extends State {
+// 	state: 'scrap';
+// 	status: 'success';
+// 	scrapData: string;
+// }
 
-export type ScrapState =
-	| Scrap_ErrorState
-	| Scrap_InitialState
-	| Scrap_LoadingState
-	| Scrap_SuccessState;
+// export type ScrapState =
+// 	| Scrap_ErrorState
+// 	| Scrap_InitialState
+// 	| Scrap_LoadingState
+// 	| Scrap_SuccessState;
 
 export type ScraperControllerState =
 	| IdleState
 	| LoginState
 	| LogoutState
-	| StatusState
-	| ScrapState;
+	| StatusState;
+// | ScrapState;

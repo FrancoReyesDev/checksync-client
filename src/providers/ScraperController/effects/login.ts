@@ -7,6 +7,44 @@ import {
 	Login_SuccessAction,
 } from 'src/types/providers/scraperController/actions.js';
 import {ScraperControllerEffect} from 'src/types/providers/scraperController/common.js';
+import dotenv from 'dotenv';
+import {Cookie} from 'puppeteer';
+dotenv.config();
+
+const loginOnServer = async ({sessionCookies}: {sessionCookies: Cookie[]}) => {
+	const url =
+		process.env['HOST'] + ':' + process.env['PORT'] + '/' + 'mp/login';
+
+	let headersList = {
+		Accept: '*/*',
+		'Content-Type': 'application/json',
+	};
+
+	const config: RequestInit = {
+		method: 'POST',
+		headers: headersList,
+		cache: 'no-store',
+		body: JSON.stringify({sessionCookies}),
+	};
+
+	const response = await fetch(url, config);
+
+	return response.ok;
+};
+
+const startScrapRunner = async () => {
+	const url =
+		process.env['HOST'] + ':' + process.env['PORT'] + '/' + 'mp/start';
+
+	const config: RequestInit = {
+		method: 'POST',
+		cache: 'no-store',
+	};
+
+	const response = await fetch(url, config);
+
+	return response.ok;
+};
 
 export const loginEffect: ScraperControllerEffect = (state, dispatch) => {
 	const {status, scraper} = state as LoginState;
@@ -14,26 +52,38 @@ export const loginEffect: ScraperControllerEffect = (state, dispatch) => {
 	if (status === 'initial') {
 		dispatch({
 			type: 'login',
-			loginHandler: scraper.loginClientHandler(),
+			launchLogin: scraper.launchLogin,
 		});
 
 		return;
 	}
 
 	if (status === 'loading') {
-		const {loginHandler} = state as Login_LoadingState;
-		const {login} = loginHandler;
-		login().then(res => {
-			if (!res)
+		const {launchLogin} = state as Login_LoadingState;
+
+		launchLogin().then(async res => {
+			if ('error' in res)
 				// and login in server.
 				return dispatch({
 					type: 'login',
 					error: 'error al loguear, vuelva a intentarlo',
-					loginHandler,
+					launchLogin: launchLogin,
 				} satisfies Login_ErrorAction);
 
+			const loginOnServerResponse = await loginOnServer({
+				sessionCookies: res.cookies,
+			});
+			if (!loginOnServerResponse)
+				return dispatch({
+					type: 'login',
+					error: 'error al loguear en el servidor, vuelva a intentarlo',
+					launchLogin,
+				} satisfies Login_ErrorAction);
+
+			startScrapRunner();
+
 			dispatch({
-				loginHandler,
+				launchLogin,
 				type: 'login',
 			} satisfies Login_SuccessAction);
 		});

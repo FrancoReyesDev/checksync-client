@@ -1,7 +1,7 @@
 // import {Config} from 'checksync-scraper/types/Config.js';
 // import {Cookie} from 'puppeteer';
 import {States} from '../common.js';
-import {LoginClientHandler} from 'checksync-scraper';
+import {Scraper, ScraperStatus} from 'checksync-scraper';
 
 // Actions
 export type Fetch_InitialAction = {
@@ -9,7 +9,7 @@ export type Fetch_InitialAction = {
 };
 
 export interface Fetch_SuccessAction extends Fetch_InitialAction {
-	statusData: {lastId: string; cookiesExpiration: number};
+	scraperStatus: ScraperStatus;
 }
 
 export interface Fetch_ErrorAction extends Fetch_InitialAction {
@@ -49,7 +49,7 @@ export type FetchAction =
 
 export type Login_InitialAction = {
 	type: 'login';
-	loginHandler: LoginClientHandler;
+	launchLogin: Scraper['launchLogin'];
 };
 
 export interface Login_ErrorAction extends Login_InitialAction {

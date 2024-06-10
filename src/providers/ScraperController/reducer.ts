@@ -3,7 +3,7 @@ import {execHandler} from '../../providers/ScraperController/transitions/execHan
 import {loginHandler} from '../../providers/ScraperController/transitions/loginHandler.js';
 import {backHandler} from '../../providers/ScraperController/transitions/backHandler.js';
 import {fetchHandler} from './transitions/fetchHandler.js';
-import {scrapHandler} from './transitions/scrapHandler.js';
+// import {scrapHandler} from './transitions/scrapHandler.js';
 
 import {TransitionsMachine} from '../../types/providers/common.js';
 import {ScraperControllerState} from '../../types/providers/scraperController/states.js';
@@ -31,11 +31,12 @@ export const reducer = (
 			back: backHandler,
 			exec: execHandler,
 		},
-		scrap: {
-			scrap: scrapHandler,
-			back: backHandler,
-			exec: execHandler,
-		},
+		// No se haran tareas en local, Solo en el server, para ver el proceso de scraping se usara a checksync-server, Esto para separar responsabilidades, el cliente solo sera cliente
+		// scrap: {
+		// 	scrap: scrapHandler,
+		// 	back: backHandler,
+		// 	exec: execHandler,
+		// },
 	};
 
 	return transitions[state.state]?.[action.type]?.(state, action) ?? state;

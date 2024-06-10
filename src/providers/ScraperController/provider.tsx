@@ -9,7 +9,7 @@ import React, {
 import {reducer} from './reducer.js';
 // import {initialEffect} from './effects/initial.js';
 import {statusEffect} from './effects/status.js';
-import {scrapEffect} from './effects/scrap.js';
+// import {scrapEffect} from './effects/scrap.js';
 import {loginEffect} from './effects/login.js';
 
 import {ScraperControllerAction} from '../../types/providers/scraperController/actions.js';
@@ -21,7 +21,11 @@ import {
 } from '../../types/providers/scraperController/states.js';
 import {Scraper} from 'checksync-scraper';
 
-const initialState: IdleState = {state: 'idle', scraper: {} as Scraper};
+const initialState: IdleState = {
+	state: 'idle',
+	scraper: {} as Scraper,
+	scraperStatus: {logged: false, working: false, sessionExpirationTimeStamp: 0},
+};
 
 const context = createContext<
 	[ScraperControllerState, Dispatch<ScraperControllerAction>]
@@ -43,7 +47,7 @@ export const ScraperControllerProvider: React.FC<{
 			ScraperControllerAction
 		> = {
 			status: statusEffect,
-			scrap: scrapEffect,
+			// scrap: scrapEffect,
 			login: loginEffect,
 		};
 
