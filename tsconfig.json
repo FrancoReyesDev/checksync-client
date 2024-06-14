@@ -1,20 +1,20 @@
 {
 	"extends": "@sindresorhus/tsconfig",
+	
 	"compilerOptions": {
-		"outDir": "dist",
-		"strict": true,
-		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
-		"resolveJsonModule": true,
-		"baseUrl": ".",
-		"rootDir": "./src",
-		"paths": {
-			"@src/*": ["src/*"]
-		},
-		// 	"@scraper/*": ["./scraper/*"]
-		// },
-		"esModuleInterop": true
+		"outDir": "dist",
+		"lib": [
+			"DOM",
+			"DOM.Iterable",
+			"ES2023"
+		],
+		"sourceMap": true,
+		"jsx": "react",
+		"isolatedModules": true,
+		"paths": {"src/*":["./src/*"]}
 	},
-	// "include": ["**/*.ts", "**/*.tsx", "src"],
-	"exclude": ["node_modules", "checksync-scraper", "session", "dist"]
+	
+	"include": ["src"]
+	
 }

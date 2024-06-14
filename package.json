@@ -9,6 +9,7 @@
 	},
 	"scripts": {
 		"updateSC": "node updateSC.cjs",
+		"build-scraper":"git submodule update --init --remote && cd checksync-scraper && npm install && npm run build",
 		"build": "tsc",
 		"dev": "tsc-watch --onSuccess \"npm run start\"",
 		"start": "node ./dist/cli.js",
@@ -37,6 +38,7 @@
 		"ink-testing-library": "^3.0.0",
 		"prettier": "^2.8.7",
 		"simple-git": "^3.24.0",
+		"tsc-watch": "^6.2.0",
 		"typescript": "^5.0.3",
 		"xo": "^0.53.1"
 	},

@@ -1,10 +1,10 @@
-import {StatusState} from 'src/types/providers/scraperController/states.js';
+import { StatusState } from 'src/types/providers/scraperController/states.js';
 import {
 	Fetch_ErrorAction,
 	Fetch_SuccessAction,
-} from 'src/types/providers/scraperController/actions.js';
-import {ScraperControllerEffect} from 'src/types/providers/scraperController/common.js';
-import {getStatus} from 'src/services/checksync-server/getStatus.js';
+} from '../../../types/providers/scraperController/actions.js';
+import {ScraperControllerEffect} from '../../../types/providers/scraperController/common.js';
+import {getStatus} from '../../../services/checksync-server/getStatus.js';
 
 export const statusEffect: ScraperControllerEffect = (state, dispatch) => {
 	const {status} = state as StatusState;
