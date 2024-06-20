@@ -9,11 +9,11 @@ import {
 import {ScraperControllerEffect} from 'src/types/providers/scraperController/common.js';
 import dotenv from 'dotenv';
 import {Cookie} from 'puppeteer';
+import {origin} from '../../../origin.js';
 dotenv.config();
 
 const loginOnServer = async ({sessionCookies}: {sessionCookies: Cookie[]}) => {
-	const url =
-		process.env['HOST'] + ':' + process.env['PORT'] + '/' + 'mp/login';
+	const url = origin + '/mp/login';
 
 	let headersList = {
 		Accept: '*/*',
@@ -33,8 +33,7 @@ const loginOnServer = async ({sessionCookies}: {sessionCookies: Cookie[]}) => {
 };
 
 const startScrapRunner = async () => {
-	const url =
-		process.env['HOST'] + ':' + process.env['PORT'] + '/' + 'mp/start';
+	const url = origin + '/mp/start';
 
 	const config: RequestInit = {
 		method: 'POST',
@@ -73,6 +72,7 @@ export const loginEffect: ScraperControllerEffect = (state, dispatch) => {
 			const loginOnServerResponse = await loginOnServer({
 				sessionCookies: res.cookies,
 			});
+
 			if (!loginOnServerResponse)
 				return dispatch({
 					type: 'login',

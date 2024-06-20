@@ -31,13 +31,14 @@ export const loginHandler: ScraperControllerTransition = (state, action) => {
 			} satisfies Login_ErrorState;
 		}
 
+		return {
+			scraper,
+			state: 'login',
+			status: 'success',
+			scraperStatus: state.scraperStatus,
+		} satisfies Login_SuccessState;
+
 		if (scraper.getStatus().logged) {
-			return {
-				scraper,
-				state: 'login',
-				status: 'success',
-				scraperStatus: state.scraperStatus,
-			} satisfies Login_SuccessState;
 		}
 	}
 
